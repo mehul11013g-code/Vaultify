@@ -20,7 +20,7 @@ cloudinary.config(
 OWNER_PASSWORD = 'vaultify@owner2026'
 
 # ─── POSTGRESQL DATABASE ────────────────────────────────
-DATABASE_URL = 'postgresql://postgres:Manish_20100@db.jxbskhyoeuffnvwssqgs.supabase.co:5432/postgres'
+DATABASE_URL = 'postgresql://postgres.jxbskhyoeuffnvwssqgs:Manish_20100@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres'
 
 def get_db():
     conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
