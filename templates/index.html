@@ -1,0 +1,384 @@
+{% extends 'base.html' %}
+{% block title %}Vaultify — Wear the Vault{% endblock %}
+{% block extra_head %}
+<style>
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(253,251,248,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent; transition: border-color 0.3s;
+  }
+  nav.scrolled { border-color: var(--border); }
+  .nav-logo { font-family: var(--serif); font-size: 22px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 32px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .nav-links a:hover { color: var(--charcoal); }
+  .nav-actions { display: flex; gap: 16px; align-items: center; }
+  .nav-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--muted); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; overflow: hidden;
+    background: var(--charcoal);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #1a1710 0%, #2a2318 50%, #1a1510 100%);
+  }
+  .hero-content { position: relative; z-index: 2; padding: 160px 80px 80px; max-width: 680px; }
+  .hero-eyebrow { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .hero-title { font-family: var(--serif); font-size: clamp(52px,6vw,96px); font-weight: 300; line-height: 1.05; color: #fff; margin-bottom: 24px; }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.8; margin-bottom: 40px; max-width: 460px; }
+  .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary { padding: 16px 40px; background: var(--accent); color: var(--charcoal); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; display: inline-block; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-ghost { padding: 16px 40px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; display: inline-block; transition: border-color 0.2s; }
+  .btn-ghost:hover { border-color: white; }
+  .hero-badge { display: inline-block; margin-top: 40px; background: rgba(255,255,255,0.08); backdrop-filter: blur(16px); padding: 20px 28px; border: 1px solid rgba(255,255,255,0.18); }
+  .badge-label { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+  .badge-val { font-family: var(--serif); font-size: 40px; color: white; line-height: 1; }
+  .badge-sub { font-size: 10px; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 4px; }
+
+  /* ── TICKER ── */
+  .ticker { background: var(--accent); padding: 12px 0; overflow: hidden; }
+  .ticker-inner { display: flex; gap: 48px; animation: ticker 20s linear infinite; white-space: nowrap; }
+  .ticker-inner span { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--charcoal); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── SECTIONS ── */
+  section { padding: 80px 80px; }
+  .section-eyebrow { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .section-title { font-family: var(--serif); font-size: clamp(32px,4vw,52px); font-weight: 300; margin-bottom: 48px; }
+  .section-title em { font-style: italic; }
+
+  /* ── CATEGORIES ── */
+  .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  .cat-card { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 3/4; }
+  .cat-bg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 64px; transition: transform 0.6s ease; }
+  .cat-card:hover .cat-bg { transform: scale(1.04); }
+  .cat-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px; background: linear-gradient(transparent, rgba(10,8,6,0.75)); }
+  .cat-name { font-family: var(--serif); font-size: 22px; font-weight: 300; color: white; margin-bottom: 4px; }
+  .cat-count { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+  .cat-arrow { position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.5); font-size: 18px; transition: color 0.2s, transform 0.2s; }
+  .cat-card:hover .cat-arrow { color: var(--accent); transform: translate(3px,-3px); }
+
+  /* ── PRODUCTS GRID ── */
+  .products-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
+  .product-card { cursor: pointer; transition: transform 0.25s; }
+  .product-card:hover { transform: translateY(-4px); }
+  .product-img { position: relative; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 16px; }
+  .product-photo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 80px; }
+  .product-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .product-tag { position: absolute; top: 12px; left: 12px; background: var(--charcoal); color: white; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; padding: 3px 8px; }
+  .product-wishlist { position: absolute; top: 12px; right: 12px; background: white; border: none; width: 32px; height: 32px; cursor: pointer; font-size: 14px; opacity: 0; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; }
+  .product-card:hover .product-wishlist { opacity: 1; }
+  .product-name { font-size: 14px; color: var(--charcoal); margin-bottom: 4px; }
+  .product-desc { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .product-price { font-family: var(--serif); font-size: 20px; }
+
+  /* ── PERKS STRIP ── */
+  .strip { background: var(--charcoal); padding: 48px 80px; display: grid; grid-template-columns: repeat(3,1fr); }
+  .strip-item { text-align: center; padding: 0 32px; border-right: 1px solid rgba(255,255,255,0.08); }
+  .strip-item:last-child { border-right: none; }
+  .strip-icon { font-size: 28px; margin-bottom: 12px; }
+  .strip-title { font-family: var(--serif); font-size: 18px; color: white; margin-bottom: 6px; }
+  .strip-sub { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.08em; }
+
+  /* ── FOOTER ── */
+  footer { background: var(--charcoal); padding: 64px 80px 32px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-brand { font-family: var(--serif); font-size: 24px; color: white; letter-spacing: 0.14em; margin-bottom: 16px; }
+  .footer-tagline { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.8; max-width: 260px; }
+  .footer-col-title { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .footer-links { display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 12px; color: rgba(255,255,255,0.5); transition: color 0.2s; }
+  .footer-links a:hover { color: white; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer-copy { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+  /* ── SEARCH ── */
+  .search-overlay { position:fixed; inset:0; z-index:200; background:rgba(10,8,6,0.7); backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity 0.3s; display:flex; flex-direction:column; align-items:center; padding-top:80px; }
+  .search-overlay.open { opacity:1; pointer-events:all; }
+  .search-box { width:min(680px,92vw); background:var(--warm-white); box-shadow:0 24px 80px rgba(0,0,0,0.3); }
+  .search-input-row { display:flex; align-items:center; padding:0 20px; border-bottom:1px solid var(--border); }
+  .search-icon-lbl { font-size:18px; color:var(--muted); margin-right:12px; flex-shrink:0; }
+  .search-input { flex:1; padding:20px 0; border:none; background:none; font-family:var(--sans); font-size:16px; color:var(--charcoal); outline:none; }
+  .search-input::placeholder { color:var(--muted); }
+  .search-close { background:none; border:none; cursor:pointer; font-size:20px; color:var(--muted); padding:8px; flex-shrink:0; transition:color 0.2s; }
+  .search-close:hover { color:var(--charcoal); }
+  .search-results { max-height:480px; overflow-y:auto; }
+  .search-hint { padding:14px 20px; font-size:10px; color:var(--muted); letter-spacing:0.16em; text-transform:uppercase; border-bottom:1px solid var(--border); }
+  .search-popular { display:flex; flex-wrap:wrap; gap:8px; padding:16px 20px; }
+  .search-tag { padding:6px 14px; border:1px solid var(--border); background:var(--cream); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; color:var(--muted); transition:all 0.2s; }
+  .search-tag:hover { background:var(--charcoal); color:white; border-color:var(--charcoal); }
+  .sri { display:flex; align-items:center; gap:16px; padding:14px 20px; cursor:pointer; border-bottom:1px solid var(--border); transition:background 0.15s; text-decoration:none; color:inherit; }
+  .sri:hover { background:var(--cream); }
+  .sri:last-child { border-bottom:none; }
+  .sri-img { width:56px; height:56px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden; }
+  .sri-img img { width:100%; height:100%; object-fit:cover; }
+  .sri-name { font-size:14px; color:var(--charcoal); margin-bottom:3px; }
+  .sri-cat { font-size:11px; color:var(--muted); }
+  .sri-price { font-family:var(--serif); font-size:16px; color:var(--charcoal); flex-shrink:0; }
+  .search-empty { padding:40px 20px; text-align:center; color:var(--muted); font-size:13px; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    section { padding: 48px 20px; }
+    .hero-content { padding: 100px 24px 48px; }
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+    .products-grid { grid-template-columns: repeat(2,1fr); gap: 12px; }
+    .strip { padding: 48px 24px; grid-template-columns: 1fr; gap: 0; }
+    .strip-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 24px 0; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    footer { padding: 48px 24px; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="/" class="nav-logo">Vaultify</a>
+  <div class="nav-links">
+    <a href="#categories">Categories</a>
+    <a href="#featured">Featured</a>
+    <a href="https://instagram.com/vaultify_official" target="_blank">Instagram</a>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" title="Search" onclick="openSearch()">🔍</button>
+  </div>
+</nav>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay" onclick="closeSearchOutside(event)">
+  <div class="search-box">
+    <div class="search-input-row">
+      <span class="search-icon-lbl">🔍</span>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search for jewellery, watches, beauty..." oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape') closeSearch()"/>
+      <button class="search-close" onclick="closeSearch()">✕</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <p class="search-hint">Popular Categories</p>
+      <div class="search-popular">
+        <span class="search-tag" onclick="doSearch('Jewellery')">💍 Jewellery</span>
+        <span class="search-tag" onclick="doSearch('Watches')">⌚ Watches</span>
+        <span class="search-tag" onclick="doSearch('Beauty')">✨ Beauty</span>
+        <span class="search-tag" onclick="doSearch('New In')">🆕 New In</span>
+        <span class="search-tag" onclick="doSearch('Bestseller')">⭐ Bestseller</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">New Collection — SS 2026</p>
+    <h1 class="hero-title">Wear the<br><em>Vault.</em></h1>
+    <p class="hero-sub">Curated jewellery, watches, accessories & beauty — for those who treat every detail as luxury.</p>
+    <div class="hero-cta">
+      <a href="#featured" class="btn-primary">Shop Now</a>
+      <a href="#categories" class="btn-ghost">Explore All</a>
+    </div>
+    <div class="hero-badge">
+      <p class="badge-label">Pieces Available</p>
+      <p class="badge-val">{{ products|length }}+</p>
+      <p class="badge-sub">New Arrivals Weekly</p>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    {% for _ in range(6) %}
+    <span>Jewellery</span><span>·</span>
+    <span>Watches</span><span>·</span>
+    <span>Beauty</span><span>·</span>
+    <span>Free Shipping</span><span>·</span>
+    <span>Authenticity Guaranteed</span><span>·</span>
+    <span>New Arrivals Weekly</span><span>·</span>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <p class="section-eyebrow">Browse by Category</p>
+  <h2 class="section-title">Shop by <em>Category</em></h2>
+  <div class="cat-grid">
+    <div class="cat-card" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#1a1510,#2a2318)">💍</div>
+      <div class="cat-info"><p class="cat-name">Jewellery</p><p class="cat-count">{{ products|selectattr('category','equalto','Jewellery')|list|length }} Pieces</p></div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#2a2520,#1a1510)">⌚</div>
+      <div class="cat-info"><p class="cat-name">Watches</p><p class="cat-count">{{ products|selectattr('category','equalto','Watches')|list|length }} Pieces</p></div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#8a6a3a,#c9a96e)">✨</div>
+      <div class="cat-info"><p class="cat-name">Beauty</p><p class="cat-count">{{ products|selectattr('category','equalto','Beauty')|list|length }} Pieces</p></div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#2a3020,#3a4030)">🌿</div>
+      <div class="cat-info"><p class="cat-name">The Edit</p><p class="cat-count">Lifestyle & More</p></div>
+      <div class="cat-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section id="featured" style="background:var(--cream)">
+  <p class="section-eyebrow">Handpicked for You</p>
+  <h2 class="section-title">Featured <em>Products</em></h2>
+  <div class="products-grid">
+    {% for p in products %}
+    <div class="product-card" onclick="window.location='/product/{{ p.id }}'">
+      <div class="product-img">
+        {% if p.image %}
+          <div class="product-photo"><img src="{{ p.image }}" alt="{{ p.name }}"/></div>
+        {% else %}
+          <div class="product-photo" style="background:{{ p.bg }}">{{ p.emoji }}</div>
+        {% endif %}
+        {% if p.badge %}<span class="product-tag">{{ p.badge }}</span>{% endif %}
+      </div>
+      <p class="product-name">{{ p.name }}</p>
+      <p class="product-desc">{{ p.category }}</p>
+      <p class="product-price">{{ p.price }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- PERKS -->
+<div class="strip">
+  <div class="strip-item"><div class="strip-icon">🚚</div><p class="strip-title">Free Shipping</p><p class="strip-sub">On orders above ₹1,500</p></div>
+  <div class="strip-item"><div class="strip-icon">✦</div><p class="strip-title">Authenticity Guaranteed</p><p class="strip-sub">Quality-checked every piece</p></div>
+  <div class="strip-item"><div class="strip-icon">↩</div><p class="strip-title">7-Day Returns</p><p class="strip-sub">Easy hassle-free policy</p></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <p class="footer-brand">Vaultify</p>
+      <p class="footer-tagline">Curated luxury for those who treat every detail as an art form.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Shop</p>
+      <div class="footer-links">
+        <a href="#featured">All Products</a>
+        <a href="#categories">Jewellery</a>
+        <a href="#categories">Watches</a>
+        <a href="#categories">Beauty</a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Connect</p>
+      <div class="footer-links">
+        <a href="https://instagram.com/vaultify_official" target="_blank">Instagram</a>
+        <a href="https://ig.me/m/vaultify_official" target="_blank">DM to Order</a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Info</p>
+      <div class="footer-links">
+        <a href="#">Shipping Policy</a>
+        <a href="#">Return Policy</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Vaultify. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // All products data for instant search
+  const allProducts = [
+    {% for p in products %}
+    { id: {{ p.id }}, name: "{{ p.name }}", cat: "{{ p.category }}", price: "{{ p.price }}", badge: "{{ p.badge }}", emoji: "{{ p.emoji }}", bg: "{{ p.bg }}", img: "{{ p.image }}" },
+    {% endfor %}
+  ];
+
+  function openSearch() {
+    document.getElementById('searchOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('searchInput').focus(), 100);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSearch() {
+    document.getElementById('searchOverlay').classList.remove('open');
+    document.getElementById('searchInput').value = '';
+    resetSearchResults();
+    document.body.style.overflow = '';
+  }
+
+  function closeSearchOutside(e) {
+    if (e.target === document.getElementById('searchOverlay')) closeSearch();
+  }
+
+  function resetSearchResults() {
+    document.getElementById('searchResults').innerHTML = `
+      <p class="search-hint">Popular Categories</p>
+      <div class="search-popular">
+        <span class="search-tag" onclick="doSearch('Jewellery')">💍 Jewellery</span>
+        <span class="search-tag" onclick="doSearch('Watches')">⌚ Watches</span>
+        <span class="search-tag" onclick="doSearch('Beauty')">✨ Beauty</span>
+        <span class="search-tag" onclick="doSearch('New In')">🆕 New In</span>
+        <span class="search-tag" onclick="doSearch('Bestseller')">⭐ Bestseller</span>
+      </div>`;
+  }
+
+  function doSearch(query) {
+    document.getElementById('searchInput').value = query;
+    const q = query.toLowerCase().trim();
+    if (!q) { resetSearchResults(); return; }
+
+    const results = allProducts.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.cat.toLowerCase().includes(q) ||
+      p.badge.toLowerCase().includes(q)
+    );
+
+    const container = document.getElementById('searchResults');
+    if (results.length === 0) {
+      container.innerHTML = `<p class="search-empty">No products found for "<strong>${query}</strong>"<br><span style="font-size:11px;opacity:0.6">Try searching jewellery, watches or beauty</span></p>`;
+      return;
+    }
+
+    container.innerHTML = `<p class="search-hint">${results.length} result${results.length > 1 ? 's' : ''} for "${query}"</p>` +
+      results.map(p => `
+        <a class="sri" href="/product/${p.id}">
+          <div class="sri-img" style="background:${p.bg}">
+            ${p.img ? `<img src="/static/uploads/${p.img}" alt="${p.name}"/>` : p.emoji}
+          </div>
+          <div style="flex:1">
+            <p class="sri-name">${p.name}</p>
+            <p class="sri-cat">${p.cat}${p.badge ? ' · ' + p.badge : ''}</p>
+          </div>
+          <span class="sri-price">${p.price}</span>
+        </a>`
+      ).join('');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSearch();
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+  });
+</script>
+{% endblock %}

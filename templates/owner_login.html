@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Owner Login — Vaultify{% endblock %}
+{% block extra_head %}
+<style>
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--charcoal); }
+  .login-box { background:var(--warm-white); padding:56px 48px; width:min(440px,94vw); text-align:center; }
+  .login-eyebrow { font-size:10px; letter-spacing:0.3em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  .login-title { font-family:var(--serif); font-size:32px; font-weight:300; margin-bottom:8px; }
+  .login-sub { font-size:13px; color:var(--muted); margin-bottom:32px; line-height:1.6; }
+  .login-input { width:100%; padding:14px 16px; border:1px solid var(--border); background:var(--cream); font-family:var(--sans); font-size:14px; color:var(--charcoal); outline:none; margin-bottom:8px; letter-spacing:0.08em; transition:border-color 0.2s; }
+  .login-input:focus { border-color:var(--charcoal); }
+  .login-error { font-size:12px; color:#e74c3c; min-height:20px; margin-bottom:12px; }
+  .login-btn { width:100%; padding:16px; background:var(--charcoal); color:white; border:none; cursor:pointer; font-family:var(--sans); font-size:12px; letter-spacing:0.2em; text-transform:uppercase; transition:opacity 0.2s; margin-bottom:12px; }
+  .login-btn:hover { opacity:0.85; }
+  .login-back { font-size:12px; color:var(--muted); text-decoration:none; letter-spacing:0.1em; text-transform:uppercase; }
+  .login-back:hover { color:var(--charcoal); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="login-box">
+  <p class="login-eyebrow">Vaultify</p>
+  <h1 class="login-title">Owner Access</h1>
+  <p class="login-sub">Enter your secret password to manage products, prices and images.</p>
+  <form method="POST">
+    <input type="password" name="password" class="login-input" placeholder="Enter password" autofocus/>
+    <p class="login-error">{% if error %}{{ error }}{% endif %}</p>
+    <button type="submit" class="login-btn">Login →</button>
+  </form>
+  <a href="/" class="login-back">← Back to Store</a>
+</div>
+{% endblock %}

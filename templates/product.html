@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% block title %}{{ p.name }} — Vaultify{% endblock %}
+{% block extra_head %}
+<style>
+  nav { display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid var(--border); background:var(--warm-white); position:sticky; top:0; z-index:100; }
+  .nav-logo { font-family:var(--serif); font-size:20px; letter-spacing:0.14em; text-transform:uppercase; }
+  .pdp-wrap { max-width:1100px; margin:0 auto; padding:40px 40px 80px; display:grid; grid-template-columns:1fr 1fr; gap:64px; }
+  .pdp-img-box { position:sticky; top:80px; height:fit-content; }
+  .pdp-main-img { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:140px; position:relative; overflow:hidden; }
+  .pdp-main-img img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .pdp-badge { position:absolute; top:16px; left:16px; background:var(--charcoal); color:white; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; padding:4px 10px; }
+
+  .pdp-info { display:flex; flex-direction:column; gap:0; padding-top:8px; }
+  .pdp-cat { font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .pdp-name { font-family:var(--serif); font-size:36px; font-weight:300; line-height:1.2; margin-bottom:12px; }
+  .pdp-rating { display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .pdp-stars { color:var(--accent); letter-spacing:2px; }
+  .pdp-rval { font-size:13px; font-weight:600; }
+  .pdp-rcnt { font-size:12px; color:var(--muted); }
+  .pdp-instock { font-size:12px; color:#2d7a4f; font-weight:500; }
+  .pdp-prices { display:flex; align-items:baseline; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
+  .pdp-price { font-family:var(--serif); font-size:36px; }
+  .pdp-mrp { font-size:16px; color:var(--muted); text-decoration:line-through; }
+  .pdp-disc { font-size:13px; color:#2d7a4f; font-weight:600; background:#e8f5ee; padding:3px 8px; }
+  .divider { height:1px; background:var(--border); margin:20px 0; }
+  .sec-title { font-size:10px; letter-spacing:0.22em; text-transform:uppercase; font-weight:600; margin-bottom:14px; }
+  .pdp-desc { font-size:14px; color:var(--muted); line-height:1.8; }
+  .spec-row { display:flex; padding:11px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .spec-key { width:160px; color:var(--muted); flex-shrink:0; }
+  .delivery { display:flex; flex-direction:column; gap:16px; }
+  .del-item { display:flex; align-items:flex-start; gap:12px; }
+  .del-icon { font-size:18px; flex-shrink:0; }
+  .del-t { font-size:13px; font-weight:500; margin-bottom:2px; }
+  .del-s { font-size:11px; color:var(--muted); }
+
+  /* DM Button */
+  .dm-btn {
+    display:flex; align-items:center; justify-content:center; gap:12px;
+    padding:18px 24px; margin-top:28px;
+    background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);
+    color:white; font-size:14px; font-weight:700; letter-spacing:0.06em;
+    text-transform:uppercase; border:none; cursor:pointer;
+    text-decoration:none; transition:opacity 0.2s;
+    box-shadow:0 4px 24px rgba(238,42,123,0.3);
+  }
+  .dm-btn:hover { opacity:0.9; }
+  .dm-handle { font-size:11px; font-weight:400; background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:20px; text-transform:none; letter-spacing:0.03em; }
+
+  /* Reviews */
+  .reviews { display:flex; flex-direction:column; gap:16px; margin-top:48px; }
+  .review { background:var(--cream); padding:20px; border-left:3px solid var(--accent); }
+  .rev-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .rev-av { width:36px; height:36px; border-radius:50%; background:var(--charcoal); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; flex-shrink:0; }
+  .rev-name { font-size:13px; font-weight:500; margin-bottom:3px; }
+  .rev-stars { color:var(--accent); font-size:12px; }
+  .rev-text { font-size:13px; color:var(--muted); line-height:1.7; }
+
+  /* Related */
+  .related-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px; }
+  .rel-card { cursor:pointer; border:1px solid var(--border); transition:transform 0.2s,box-shadow 0.2s; }
+  .rel-card:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.07); }
+  .rel-img { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:36px; overflow:hidden; }
+  .rel-img img { width:100%; height:100%; object-fit:cover; }
+  .rel-info { padding:10px 12px; }
+  .rel-name { font-size:11px; margin-bottom:4px; line-height:1.4; }
+  .rel-price { font-family:var(--serif); font-size:14px; }
+
+  @media(max-width:768px) {
+    .pdp-wrap { grid-template-columns:1fr; gap:32px; padding:20px 16px 80px; }
+    .pdp-img-box { position:relative; top:0; }
+    .related-grid { grid-template-columns:repeat(2,1fr); }
+    nav { padding:14px 16px; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+
+<nav>
+  <a href="/" class="nav-logo">Vaultify</a>
+  <a href="/" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">← Back</a>
+</nav>
+
+<div class="pdp-wrap">
+
+  <!-- LEFT: Image -->
+  <div class="pdp-img-box">
+    <div class="pdp-main-img" style="background:{{ p.bg }}">
+      {% if p.image %}
+        <img src="{{ p.image }}" alt="{{ p.name }}"/>
+      {% else %}
+        {{ p.emoji }}
+      {% endif %}
+      {% if p.badge %}<span class="pdp-badge">{{ p.badge }}</span>{% endif %}
+    </div>
+  </div>
+
+  <!-- RIGHT: Info -->
+  <div class="pdp-info">
+    <p class="pdp-cat">{{ p.category }}</p>
+    <h1 class="pdp-name">{{ p.name }}</h1>
+    <div class="pdp-rating">
+      <span class="pdp-stars">★★★★☆</span>
+      <span class="pdp-rval">4.2</span>
+      <span class="pdp-rcnt">(128 reviews)</span>
+      <span style="color:var(--muted)">·</span>
+      <span class="pdp-instock">✓ In Stock</span>
+    </div>
+    <div class="pdp-prices">
+      <span class="pdp-price">{{ p.price }}</span>
+      <span class="pdp-mrp">{{ p.mrp }}</span>
+      <span class="pdp-disc">{{ p.discount }}</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="sec-title">About this Product</p>
+    <p class="pdp-desc">{{ p.description }}</p>
+
+    <div class="divider"></div>
+
+    <p class="sec-title">Product Details</p>
+    {% for spec in specs %}
+    <div class="spec-row">
+      <span class="spec-key">{{ spec[0] }}</span>
+      <span>{{ spec[1] }}</span>
+    </div>
+    {% endfor %}
+
+    <div class="divider"></div>
+
+    <p class="sec-title">Delivery & Returns</p>
+    <div class="delivery">
+      <div class="del-item"><span class="del-icon">📦</span><div><p class="del-t">Free Delivery</p><p class="del-s">On orders above ₹1,500 across India</p></div></div>
+      <div class="del-item"><span class="del-icon">↩</span><div><p class="del-t">7-Day Returns</p><p class="del-s">Easy hassle-free return policy</p></div></div>
+      <div class="del-item"><span class="del-icon">✦</span><div><p class="del-t">Authenticity Guaranteed</p><p class="del-s">Quality-checked before every dispatch</p></div></div>
+    </div>
+
+    <a href="https://ig.me/m/vaultify_official" target="_blank" class="dm-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24"><defs><radialGradient id="ig" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><rect width="24" height="24" rx="6" fill="white"/><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" fill="url(#ig)"/></svg>
+      <span>DM to Order</span>
+      <span class="dm-handle">@vaultify_official ↗</span>
+    </a>
+  </div>
+</div>
+
+<!-- Reviews -->
+<div style="max-width:1100px;margin:0 auto;padding:0 40px 80px">
+  <div class="divider"></div>
+  <p class="sec-title" style="margin-top:32px">Customer Reviews</p>
+  <div class="reviews">
+    <div class="review"><div class="rev-header"><span class="rev-av">P</span><div><p class="rev-name">Priya S.</p><span class="rev-stars">★★★★★</span></div></div><p class="rev-text">Absolutely loved the quality! Looks exactly as shown and feels so premium. Will definitely order again 🖤</p></div>
+    <div class="review"><div class="rev-header"><span class="rev-av">R</span><div><p class="rev-name">Rahul M.</p><span class="rev-stars">★★★★☆</span></div></div><p class="rev-text">Great product, packaging was elegant. Gifted it to my girlfriend and she was obsessed!</p></div>
+    <div class="review"><div class="rev-header"><span class="rev-av">A</span><div><p class="rev-name">Ananya K.</p><span class="rev-stars">★★★★★</span></div></div><p class="rev-text">The DM ordering process was so smooth! Got my order within 4 days. Super happy ✨</p></div>
+  </div>
+
+  {% if related %}
+  <div class="divider" style="margin-top:48px"></div>
+  <p class="sec-title" style="margin-top:32px">You Might Also Like</p>
+  <div class="related-grid">
+    {% for r in related %}
+    <div class="rel-card" onclick="window.location='/product/{{ r.id }}'">
+      <div class="rel-img" style="background:{{ r.bg }}">
+        {% if r.image %}<img src="{{ r.image }}" alt="{{ r.name }}"/>{% else %}{{ r.emoji }}{% endif %}
+      </div>
+      <div class="rel-info">
+        <p class="rel-name">{{ r.name }}</p>
+        <p class="rel-price">{{ r.price }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

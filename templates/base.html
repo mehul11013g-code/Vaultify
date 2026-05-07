@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Vaultify{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', sans-serif;
+      --charcoal: #1a1710;
+      --accent: #c9a96e;
+      --warm-white: #fdfbf8;
+      --cream: #f5f0eb;
+      --muted: #8a8070;
+      --border: #e8e0d4;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--warm-white); color: var(--charcoal); }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--sans); }
+    img { max-width: 100%; }
+
+    /* Flash messages */
+    .flash-msg {
+      background: #2d7a4f; color: white; padding: 12px 24px;
+      font-size: 13px; letter-spacing: 0.08em; text-align: center;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="flash-msg">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+</body>
+</html>
